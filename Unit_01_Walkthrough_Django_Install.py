@@ -120,6 +120,11 @@ Django features as they are developed.
 
 
 
+[ROB]
+12.a
+# cd to the django_project/ 
+
+
 12. python manage.py runserver
 The command will run the basic web app. You will see something like the following.
 
