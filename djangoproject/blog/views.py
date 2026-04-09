@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-
 list_of_posts = [
     {
         "author": "Bill Tutman",
@@ -19,19 +18,18 @@ list_of_posts = [
 ]
 
 
-
 # Create your views here.
 
 #blog/templates/blog/home.html => blog/home.html
 def home(request):
     context_dict={
-        'posts':list_of_posts,
-        'title':'homeXX'
+        'posts': list_of_posts,
+        'title': 'rob-title'
     }
     return render(request, 'blog/home.html', context_dict)
 
 def about(request):
-    return render(request, 'blog/about.html', {'title':'rob'})
+    return render(request, 'blog/about.html', {'title': 'About'})
 
 def me(request):
     return render(request, 'blog/me.html')
