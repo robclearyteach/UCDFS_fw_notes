@@ -150,7 +150,7 @@ INSTALLED_APPS = [
 
 
 # [Note: The above "users.apps.UsersConfig" refers to
-    djangoproject/users/app.py
+    djangoproject/users/apps.py
     
     You will see it contains a class that looks something like this...
 
@@ -267,9 +267,9 @@ Create a <div> inside the block as follows (and add a Bootstrap class).
     {% extends "blog/base.html" %}
     {% block content %}
        <div class=""content-section>
-        <form method="POST">  
-           
-        </form>
+            <form method="POST">  
+            
+            </form>
        </div>
     {% endblock content %}
 
@@ -281,9 +281,9 @@ Create a <div> inside the block as follows (and add a Bootstrap class).
     {% extends "blog/base.html" %}
     {% block content %}
        <div class=""content-section>
-        <form method="POST">  
-            {% csrf_token %}                            #ADDED
-        </form>
+            <form method="POST">  
+                {% csrf_token %}                            #ADDED
+            </form>
        </div>
     {% endblock content %}
     
@@ -311,6 +311,7 @@ application from malicious requests made by other sites.
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Join Here</legend>
             </fieldset>
+        </form>
        </div>
     {% endblock content %}
 
@@ -340,6 +341,7 @@ application from malicious requests made by other sites.
                 <legend class="border-bottom mb-4">Join Here</legend>
                 {{ form.as_p }}
             </fieldset>
+        </form>
        </div>
     {% endblock content %}
 
