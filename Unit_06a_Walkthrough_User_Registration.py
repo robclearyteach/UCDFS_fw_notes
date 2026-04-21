@@ -1,5 +1,5 @@
 """
-Unit 6 Walk through 
+Unit 6a Walk through 
 User Registration 
 
 [Rob]
@@ -150,7 +150,7 @@ INSTALLED_APPS = [
 
 
 # [Note: The above "users.apps.UsersConfig" refers to
-    djangoproject/users/apps.py
+    djangoproject/users/app.py
     
     You will see it contains a class that looks something like this...
 
@@ -266,11 +266,11 @@ Create a <div> inside the block as follows (and add a Bootstrap class).
 
     {% extends "blog/base.html" %}
     {% block content %}
-       <div class=""content-section>
+        <div class=""content-section>
             <form method="POST">  
-            
+                
             </form>
-       </div>
+        </div>
     {% endblock content %}
 
 #
@@ -280,11 +280,11 @@ Create a <div> inside the block as follows (and add a Bootstrap class).
 
     {% extends "blog/base.html" %}
     {% block content %}
-       <div class=""content-section>
+        <div class=""content-section>
             <form method="POST">  
                 {% csrf_token %}                            #ADDED
             </form>
-       </div>
+        </div>
     {% endblock content %}
     
 In Django, any HTML form that sends data using the POST method must 
@@ -300,19 +300,21 @@ application from malicious requests made by other sites.
 #
 #
 [Rob]
-12. Below we can add a <fieldset class="form-group"> with a
-<legend class="border-bottom mb-4"> for styling.
+12. Below we can add a <fieldset class="form-group"> 
+    with a 'Join Here' as a 
+        <legend class="border-bottom mb-4"> 
+    for styling.
 
     {% extends "blog/base.html" %}
     {% block content %}
-       <div class=""content-section>
-        <form method="POST">  
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Join Here</legend>
-            </fieldset>
-        </form>
-       </div>
+        <div class=""content-section>
+            <form method="POST">  
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Join Here</legend>
+                </fieldset>
+            </form>
+        </div>
     {% endblock content %}
 
 #
@@ -334,15 +336,15 @@ application from malicious requests made by other sites.
 
     {% extends "blog/base.html" %}
     {% block content %}
-       <div class=""content-section>
-        <form method="POST">  
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Join Here</legend>
+        <div class=""content-section>
+            <form method="POST">  
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Join Here</legend>
                 {{ form.as_p }}
-            </fieldset>
-        </form>
-       </div>
+                </fieldset>
+            </form>
+        </div>
     {% endblock content %}
 
 #
@@ -352,20 +354,20 @@ application from malicious requests made by other sites.
 
     {% extends "blog/base.html" %}
     {% block content %}
-       <div class=""content-section>
-        <form method="POST">  
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Join Here</legend>
-                {{ form.as_p }}
-            </fieldset>
-            
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Sign Up</button>
-            </div>
+        <div class=""content-section>
+            <form method="POST">  
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Join Here</legend>
+                    {{ form.as_p }}
+                </fieldset>
 
-        </form>
-       </div>
+                    <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Sign Up</button>
+                    </div>
+
+            </form>
+        </div>
     {% endblock content %}
 
 #
@@ -374,28 +376,28 @@ application from malicious requests made by other sites.
 15. Next we can add a section on the form for signing in if a user already has an account.
     Also adding some BootStrap classes for styling.
 
-{% extends "blog/base.html" %}
-{% block content %}
-   <div class="content-section">
-    <form method="POST">  
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Join Here</legend>
-            {{ form.as_p }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Sign Up</button>
+    {% extends "blog/base.html" %}
+    {% block content %}
+        <div class="content-section">
+            <form method="POST">  
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Join Here</legend>
+                    {{ form.as_p }}
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Sign Up</button>
+                </div>
+            </form>
+
+            <div class="border-top pt-3">
+                <small class="text-muted">
+                    Already hava an account? <a class="ml-2" href="#">Sign In</a>
+                </small>
+            </div>
+
         </div>
-    </form>
-    
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Already hava an account? <a class="ml-2" href="#">Sign In</a>
-        </small>
-    </div>
-   
-   </div>
-{% endblock content %}
+    {% endblock content %}
     
 
 #

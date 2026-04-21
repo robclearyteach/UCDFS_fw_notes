@@ -289,7 +289,7 @@ python manage.py shell
 16. Storing a filter() inside a variable.
 
 [Rob]
->>> user
+>>> user = User.objects.filter(username='test')
 <QuerySet [<User: test>]>
 
 # [Note]: the return from filter() is a QuerySet
