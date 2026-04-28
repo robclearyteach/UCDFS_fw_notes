@@ -274,7 +274,7 @@ password2: 1111test
 Update to... 
 """
 #See 'UPDATED' & 'CHANGE' below...
-from .forms import UserRegisterForm                      
+from . forms import UserRegisterForm                      
 from django.contrib import messages              
                
 def register(request):
