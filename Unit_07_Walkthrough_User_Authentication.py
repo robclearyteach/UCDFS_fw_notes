@@ -485,7 +485,8 @@ and ideally test each pathway of the conditional above.
 #
 #
 
-20. Add a restriction to certain routes. This is important in various situations. For the Blog application we
+20. Add a restriction to certain routes. This is important in various situations. 
+For the Blog application we
 want to restrict users from editing their profile page until they have logged in. 
 (i.e. you shouldn't be able to just visit /profile and see a Profile page.)
 #

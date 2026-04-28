@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-#from django.contrib.auth.forms import UserCreationForm     #REMOVE:
+from django.contrib.auth.decorators import login_required #Added import here
+from django.views.decorators.cache import never_cache
+
 from .forms import UserRegisterForm                         #CHANGE: forms.py->UserRegisterForm
 from django.contrib import messages                             
 
@@ -10,8 +12,8 @@ def register(request):
         if form.is_valid():  
             form.save()         
             username = form.cleaned_data.get('username')    
-            messages.success(request, f'Account created for {username}!')
-            return redirect('blog-home')
+            messages.success(request, f'Account created for {username}, now you can login.')
+            return redirect('login')
 
 
         else:
@@ -19,3 +21,8 @@ def register(request):
     else:
         form = UserRegisterForm()                           #CHANGE:
         return render(request, 'users/register.html', {'msg':'GET Request','form':form} )
+    
+@login_required
+@never_cache    
+def profile(request):
+    return render(request, 'users/profile.html')
