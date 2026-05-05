@@ -108,12 +108,12 @@ CODE EXPLANATION...
 
 The line below imports the class PostlistView we created.
 """
-from .views import PostListView #Changed here
+from . views import PostListView        #ADDED
 """
 
 The line below executes the as_view() on PostlistView
 """
-path('', PostListView.as_view(), name='blog-home'), #Changed here
+path('', PostListView.as_view(), name='blog-home'), #UPDATED
 """
 
 #
@@ -336,16 +336,14 @@ Now try to go to a post with an ID that does not exist.
 
 http://127.0.0.1:8000/blog/post/100
 
+See:
+Page not found (404)
+No post found matching the query
 #
 #
 
 16. Let's add links that will go to individual posts from our homepage.
 At the moment they are dummy links.
-
-e.g.
-
-http://127.0.0.1:8000/#
-
 
 Open: blog/home.html
 
@@ -353,7 +351,7 @@ Open: blog/home.html
     <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
 
 
--->Update to:
+-->Update the href="#" to:
 
 
     <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>

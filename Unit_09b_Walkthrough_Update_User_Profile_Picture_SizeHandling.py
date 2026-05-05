@@ -20,7 +20,7 @@ we're using it's natural resolution (and size)
 --> Right click on the profile image and open in a new tab.
     Hover/view the tab <title>
     e.g.
-        'profile_img_blackpanther.png (PNG Image, 4024 × 4220 pixels)'
+        'profile_img_blackpanther.png (PNG Image, 4024x4220 pixels)'
     
     OR in Console:
         >document.querySelector('img').naturalWidth 

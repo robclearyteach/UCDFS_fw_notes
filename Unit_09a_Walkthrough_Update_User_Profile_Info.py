@@ -51,7 +51,7 @@ forms.py should now look like the following.
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Profile
+from . models import Profile
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
@@ -198,8 +198,8 @@ users
 @login_required
 @never_cache
 def profile(request):
-    u_form = UserUpdateForm(instance=request.user)          #instance passed
-    p_form = ProfileUpdateForm(instance=request.user.profile)    #instance passed
+    u_form = UserUpdateForm(instance=request.user)              #instance passed
+    p_form = ProfileUpdateForm(instance=request.user.profile)   #instance passed
 
     context = {
         'u_form': u_form,
