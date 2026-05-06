@@ -217,7 +217,7 @@ class PostCreateView(CreateView):
         return super().form_valid(form)             # Validate form by running form_valid method from parent class.
 """
 
-This ensures that the submitting “Post” on post_form.html 
+This ensures that a Submit ('Post') on 'post_form.html' 
  - creates a new post object, 
  - sets its author to the currently logged-in User via the newly added form_valid(), and
  - saves it to the database.
@@ -630,10 +630,10 @@ UserPassesTestMixin.test_func() override:
 Code explained...
 """ 
 def test_func(self):
-    post = self.get_object()          # Get the post being accessed
-    if self.request.user == post.author:  # Check if current user is the author
-        return True                   # Allow access
-    return False                      # Deny access
+    post = self.get_object()                # Get the post being accessed
+    if self.request.user == post.author:    # Check if current user is the author
+        return True                         # Allow access
+    return False                            # Deny access
 
 """    
 The test_func() method is meant to return True if the current user passes the test, and False otherwise.
