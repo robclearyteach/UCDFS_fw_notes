@@ -1,0 +1,684 @@
+
+##
+#  GitHub: create new github repo
+#			for deployment
+##
+name[<test-name>]
+https://github.com/<your-github>/<test-name>.git
+
+
+##
+# terminal: create 
+		djangoproject_deploy/
+	(copy of latest django project)
+	
+cd to folder containing 
+	djangoproject/
+
+cp -r djangoproject/ djangoproject_deploy/
+
+cd djangoproject_deploy/
+$ls
+>
+	blog/  .coverage	db.sqlite3  .git	.gitignore		htmlcov/  manage.py*  media/  mysite/  requirements.txt  users/
+
+
+##
+# .gitignore for deployment
+##
+#
+#
+== contents ==
+# Secrets
+.env
+# Virtual environment
+.venv/
+# Python cache
+__pycache__/
+# VS Code
+.vscode/
+# Test coverage
+htmlcov/
+.coverage
+# Django local database (don’t deploy local dev DB)
+db.sqlite3
+# Logs
+*.log
+# Media files (user uploads, usually handled in production storage)
+media/
+# Collected static files (generated during deploy)
+staticfiles/
+
+
+
+
+##
+# set up ..._deploy/ 
+#	folder as a git repo (local)
+#
+$
+git init
+git add .
+git commit -m "initial commit"
+
+
+
+##
+# push to github_deploy repo
+#
+git branch -M main
+git remote add origin https://github.com/<your-github>/<test-name>.git
+git push -u origin main
+
+view/refresh: https://github.com/<your-github>/<test-name>
+[verify files as should be]
+
+
+
+
+
+
+##
+#render.com: Postgres instance
+#			(do upfront let run in background)
+##
+-> new -->postgres
+
+Create a new Postgres instance
+
+#wait
+...
+
+#in mean-time
+
+
+
+
+##
+# requirements.txt
+##
+$ pip freeze > requirements.txt
+
+
+##
+# render web-service
+##
+New->Web Service
+
+
+Connect to github_deploy repo'
+
+
+
+region[Frankfurt]
+build-command [ pip install -r requirements.txt ]
+
+start-command [ gunicorn mysite.wsgi:application ]
+
+instance-type [ FREE ]
+
+
+##
+# Initial deploy
+# 	Deploy [expect fail]
+
+
+##
+# Error 1: gunicorn not installed
+##
+Running 'gunicorn mysite.wsgi:application'
+
+	gunicorn: command not found
+
+
+
+
+
+#requirements.txt
+# add  
+gunicorn==23.0.0
+
+git add
+git commit
+git push
+
+
+##
+# render: re-deploy: ALLOWED_HOSTS
+#
+Manual Deploy --> deploy latest commit
+
+
+success build:
+
+service live: visit: https://<test-name>-<code>.onrender.com/
+
+
+
+
+See error:
+Exception Type:	DisallowedHost
+Exception Value:	
+Invalid HTTP_HOST header: '<test-name>-<code>.onrender.com'. 
+You may need to add '<test-name>-<code>.onrender.com' to ALLOWED_HOSTS
+
+
+##
+# mysite/settings.py --> ALLOWED_HOSTS
+
+ALLOWED_HOSTS = ['<test-name>-<code>.onrender.com']
+
+
+
+
+-Save file
+git add 
+git commit 
+git push
+
+##================================================
+# Consider... 
+##=====================================================
+ALLOWED_HOSTS=['localhost', '127.0.0.1', os.getenv('RENDER_EXTERNAL_HOSTNAME', '')]
+
+		https://render.com/docs/environment-variables#render-external-hostname
+		https://render.com/docs/environment-variables
+
+# commonly add localhost and 127.0.0.1 for local-dev also
+##======================================================
+
+
+
+
+
+#
+# render: re-deploy: DATABASES: postgres 
+#
+Manual Deploy --> deploy latest commit
+
+service live: visit: https://<test-name>-<code>.onrender.com/
+					 https://<test-name>-<code>.onrender.com/blog/
+See error:
+
+Exception Type:	OperationalError
+Exception Value:	no such table: blog_post
+
+
+$ pip install psycopg2-binary
+$ pip install dj-database-url
+
+# requirements.txt: add
+dj-database-url==3.1.2
+psycopg2-binary==2.9.12
+
+# mysite/settings.py
+import dj_database_url							#ADDED
+DATABASES = {									#ADDED
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
+}
+
+
+git add 
+git commit 
+git push
+
+# Render:  
+
+#	  copy Internal Database URL
+
+
+#	  +Add Variable: (paste Internal Database URL) e.g...
+ DATABASE_URL[postgresql://<testname>_user:<pwd>@dpg-d7uvbdvlk1mc73aqs670-a/<testdbname>]
+
+#	  Save
+
+#	Render
+#	  Settings: update:
+#		Build-command[... && python manage.py migrate] 
+
+
+
+
+# re-deployed
+# site live: visit but
+#  no navbar
+
+#	Render
+#	  Settings: add: 
+#		Build-command[ ...&& python manage.py collectstatic --no-input]
+
+
+
+===
+can do this locally: 
+
+$ python manage.py collectstatic 
+
+>
+	See: 
+		djangoproject/	
+					|- staticfiles/
+
+# is created.
+# Inside...
+						|- admin/			#all css/js/img's for Django Admin site
+						|- blog/			#blog app static files...
+							|- default.jpg
+							|-	main.css
+							
+
+##
+#.gitignore
+# ** ADD 
+staticfiles/
+
+##
+##(if not already there)
+
+
+
+
+
+# re-deployed
+# site live: visit but
+#  no navbar
+
+# problem: need Whitenoise
+
+pip install whitenoise
+
+#requirements.txt: add-line:
+whitenoise==6.12.0
+
+#settings.py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',		
+
+
+#settings.py: add:
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+#
+git add 
+git commit 
+git push
+
+==> Your service is live 🎉
+...
+==> Available at your primary URL https://<test-name>-<code>.onrender.com
+
+
+- navbar visible
+- no blogs
+	- why? 
+	
+
+
+#
+-- Connect with PgAdmin 
+--   (i.e. connect to the render.com Postgres Instance )
+
+#	Render->Dashboard
+#	  select DB service '|=|' icon
+#	  copy External Database URL
+
+
+
+
+-- ## pgAdmin
+1.1
+-- Servers-->Register-->
+Name: [ pg_render_test ]
+
+1.2
+-- Click 'Connection' Tab
+
+1.3
+-- Hostname/address from 'External URL' 
+-- After '@' up-to '/'
+
+Host name/ address	[	dpg-d7uaasfsk1mc73aqs670-a.frankfurt-postgres.render.com  ]
+
+-- Username
+-- After '://' up to ':'
+
+Username			[ testname_user ]
+
+-- ':' up-to '@'
+Password: 			[ 4H8oasdfsaeFFLWAXS93ci2ySn ]
+
+-- Click Save
+View Tables
+
+--   See:
+	auth_***
+	auth_user
+	...
+	blog_post
+	...
+	users_profile
+	
+	
+-- # all empty:
+SELECT * FROM auth_user;
+
+SELECT * FROM blog_post;
+
+SELECT * FROM users_profile;	
+	
+	
+	
+	
+#
+Re-visit:
+https://<test-name>-<code>.onrender.com/blog/
+
+Use site to register a user...
+
+##
+# ERROR: no default.jpg 
+#  
+Exception Type:	FileNotFoundError
+Exception Value:	
+[Errno 2] No such file or directory: '/opt/render/project/src/media/default.jpg'
+
+
+PgAdmin: 
+SELECT * FROM auth_user;
+SELECT * FROM users_profiles;
+
+See: 
+'blackpanther' user created...
+See:
+default.jpg stored in 'profile' table 
+
+(Just the text 'default.jpg': can't find file)
+
+
+Model: users/models.py
+	class Profile(models.Model):
+		...
+		image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
+##
+# FIX: 1. local-dev:
+#		allow: 
+
+media/default.jpg
+
+##
+#.gitignore
+
+media/*							#ADDED: '*'
+!media/default.jpg				#ADDED: line
+
+git add 
+git commit 
+git push
+
+ - check github
+ - re-deploy
+ - re-test
+ 
+ ##
+ # FIX: 2: allow null ImageField in DB
+ #			&&
+ #			allow blank for ImageField in Form submission
+ #			&&
+ #			alter users/register.html 
+			
+
+2.1: roll-back on the previous fix
+		(get back to the broken-state)
+git rm --cached media/default.jpg 
+git commit -m "remove media/default.jpg as rollback"
+git push
+
+ - check github (media/ removed)
+ - re-deploy
+ - re-test register/ 
+	- enter details
+	- submit
+	- see FileNotFoundError again
+
+
+2.2: implement fix 2
+
+	a)
+	##
+	# users/models.py
+
+	#CHANGE: blank=True, null=True
+		...
+		image = models.ImageField(upload_to='profile_pics', blank=True, null=True)
+	 
+		[NOTE: 
+				blank=True -> allows leave blank on form-submit (optional)
+				null =True -> allows DB field to be NULL
+		]
+	 
+	b)
+	##
+	# users/profile.html
+
+	## CHANGE
+			{% if user.profile.image %}
+				<img class="rounded-circle account-img" src="{{ user.profile.image.url }}"> 
+			{% else %}
+				<img class="rounded-circle account-img" src="{% static 'users/default.jpg' %}"> 
+			{% endif %}
+					
+
+		# 	Above
+				src="{% static 'users/default.jpg' %}"
+		#	REQUIRES: 
+				users/static/users/default.jpg
+			
+			$ mkdir users/static
+			$ mkdir users/static/users
+			$ cp media/default.jpg users/static/users 
+		
+		# REQUIRES: 
+			{% load static %}
+			
+		
+	c)
+	##
+	# .gitignore: 
+	#
+
+	# revert to just:
+	media/
+
+	#instead of:
+	media/*
+	!media/default.jpg
+
+
+	d)
+	##
+	# PgAdmin: clear the DB
+	#
+	DELETE FROM users_profile;
+	DELETE FROM auth_user;
+
+	SELECT * FROM auth_user;
+
+	e)
+	##
+	# Ensure: github: NO ...media/ folder
+	# Ensure: users/static  folder (so collectstatic will find default.jpg)
+	git add 
+	git commit 
+	git push
+
+	 - check github
+	 - redeploy
+	 - test 
+	 
+	 
+	** 
+	##
+	# Fails: 
+	##
+		ValueError Exception 
+		Value: The 'image' attribute has no file associated with it.
+		...
+		/opt/render/project/src/users/views.py, line 15, in register form.save()
+	
+	
+	##
+	# FIX issue
+	##
+	
+	f)
+	##
+	#	 users/models.py
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.image and self.image.path:
+            img = Image.open(self.image.path)
+
+            if img.height > 300 or img.width > 300:
+                output_size = (300, 300)
+                img.thumbnail(output_size)
+                img.save(self.image.path)    	
+				
+				
+				
+
+
+
+
+##
+#	Using dotenv 
+#   	(load_dotenv)
+## 
+
+# .ipynb file: 
+#		starter example
+#
+%%
+%pip install python-dotenv
+
+# %%
+# create file if not exists: 
+# file: .env 
+# (in same folder as this .ipynb)
+# fill-contents:
+"""
+DEBUG=True
+SECRET_KEY='abc123'
+ROB_TEST='time for tea'
+"""
+
+
+# %%
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+print( os.getenv("DEBUG") )
+print( os.getenv("SECRET_KEY") )
+print( os.getenv("ROB_TEST") )
+
+
+
+##
+#   Using .env file 
+#		to simulate ENV variables on render.com
+##
+
+djangoproject_deploy/
+│
+├── .env				#ADDED
+├── manage.py
+├── db.sqlite3
+├── app/
+│   ├── settings.py		#EDIT: to  match below
+
+
+load_dotenv( BASE_DIR / ".env" )				#POINTS TO ..\ via BASE_DIR
+ 
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
+
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+else:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+        )
+    }
+	
+	
+	
+##
+# example: test local .env 
+#
+DEBUG=True
+SECRET_KEY=dev-secret-key
+DATABASE_URL=sqlite:///db.sqlite3
+
+# BELOW: for Postgres
+#DATABASE_URL=postgresql://testuser:testpass@localhost:5432/testdb	
+#Later: set DATABASE_URL to your render.com instance EXTERNAL/INTERNAL_URL	
+
+
+
+
+	
+	
+##
+# example: if want to test local postgres instance 
+##
+1. psql postgres
+2. Create DB + user + grants
+	psql>
+	CREATE DATABASE testdb;
+	CREATE USER testuser WITH PASSWORD 'testpass';
+	GRANT ALL PRIVILEGES ON DATABASE testdb TO testuser;
+3. \q
+4. python manage.py migrate
+5. python manage.py runserver
+
+
+
+##
+#	Set DEBUG=False
+#	Set SECRET_KEY
+## 
+DEBUG = os.getenv("DEBUG", "False") == "True"
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+##
+#render: web-service 
+#	-> ENVIRONMENT VARIABLES
+#	-> Edit 
+#	+ Add
+	DEBUG [ FALSE ]  	#(auto there as false)
+	SECRET_KEY []		# 'generate' button
+
+[SECRET_KEY: alternative:
+from django.core.management.utils import get_random_secret_key
+print(get_random_secret_key())
+]
+
+##
+# only load_dotenv if local (.env file)
+
+if os.path.exists(BASE_DIR / ".env"):
+    load_dotenv(BASE_DIR / ".env")

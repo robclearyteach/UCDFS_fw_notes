@@ -105,7 +105,7 @@ class PostTests(TestCase):
 # 
 
 ## =======================================
-#       Testing the 'blog' model: Post 
+#       Testing the model: Post 
 ## =======================================
 
 2.  
@@ -166,7 +166,7 @@ def test_post_str_method(self):
     produces what we expect.
 
 - In this case: the post.title setUpTestData() created:
-    'This is a test post'
+    'Test Post'
 
 
 
@@ -263,7 +263,7 @@ def test_get_absolute_url(self):
         (the test-database's single Post created by setUpTestData(...) ) 
         
         we might expect the 'post-detail' URL-ending to produce:
-            .../blog/post/1
+            ...blog/post/1
         
     - We can assertEqual() comparing to that literal string 
             'blog/post/1'
@@ -271,7 +271,7 @@ def test_get_absolute_url(self):
       in the test-case to test it.
 
     - This time: let's just run that single test-case to see:
-        (See top-of-file examples show how to do this...)
+
     
 $ py manage.py test blog.tests.PostTests.test_get_absolute_url
 >
@@ -283,10 +283,10 @@ $ py manage.py test blog.tests.PostTests.test_get_absolute_url
     FAIL: test_get_absolute_url (blog.tests.PostTests.test_get_absolute_url)
     ----------------------------------------------------------------------
     ...
-    AssertionError: '/blog/post/1/' != '/blog/post/1'
+    AssertionError: '/blog/post/1/' != 'blog/post/1'
     - /blog/post/1/
     ?             -
-    + /blog/post/1
+    + blog/post/1
     ...
     FAILED (failures=1)
 
@@ -326,7 +326,7 @@ def test_get_absolute_url(self):
 
 """
 ## =======================================
-#       Testing the 'blog' Post: views 
+#       Testing the Post: views 
 ## =======================================
 
 5.  
@@ -522,11 +522,23 @@ def test_update_post_view(self):
         
         to reload the object from the database at that point in time.
   ]        
-  
+
+##
+# Let's run the test-case...
+#
+
+$ py manage.py test blog.tests.PostViewTests.test_update_post_view
+>
+    Found 1 test(s).
+    ...
+    Ran 1 test in 0.927s
+    ...
+    OK
+      
 # 
 # 
 
-10. test_delete_post_view method
+10. 
 """
 
 def test_delete_post_view(self):
@@ -541,7 +553,7 @@ def test_delete_post_view(self):
     self.assertFalse(Post.objects.filter(pk=self.post.pk).exists())
 """
 - The intent of this test case is to check that 
-  the PostUpdateView:  
+  the PostDeleteView:  
         - is accessible to a logged-in user ('testuser')
         - accepts a GET request to 'post-delete' URL-ending (e.g. '/blog/1/delete')
         - renders the expected (post_confirm_delete.html) to the GET request
@@ -721,8 +733,8 @@ def test_profile_update_with_invalid_image_format(self):
     - the ProfileUpdateForm rejects invalid image uploads and fails validation
 
     - invalid_image_data = b'...' simulates corrupted/non-image file content
-            the b'...' represents raw binary file data.test_post_str_method
-            a real image would contain encoded binary content 
+            the b'...' represents raw binary file data.
+            A real image would contain encoded binary content 
             (e.g., JPEG/PNG byte stream) instead of plain text
             
     - SimpleUploadedFile(...) simulates an uploaded file Object with .txt 
@@ -869,12 +881,12 @@ Open index.html, copy-path and open in a browser.
 Briefly explore what it provides...
 
 
-"""
+
 This will create a directory called htmlcov containing an interactive HTML report. 
 You can open htmlcov/index.html in your web browser to view it.
 
 """
-
+"""
 ** Remember to add lines:
 
 htmlcov/ 
@@ -897,13 +909,14 @@ TASK:
 
 $ py manage.py shell
 >>> from django.test.utils import setup_test_environment
+>>> setup_test_environment()
 >>> from django.test import Client
 >>> client = Client()
 
-#
-# ERROR 
-#
 >>> response = client.get("/blog/")
+#
+# IF ERROR... 
+#
 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
 ...
 django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
@@ -916,7 +929,7 @@ django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. Y
 
 
 #
-# should work thereafter...
+# Otherwise/thereafter...
 #
 >>> response = client.get("/blog/")
 >>> response
